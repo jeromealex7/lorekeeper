@@ -36,7 +36,7 @@ class Lorekeeper(QtWidgets.QApplication):
     @staticmethod
     def create_paths():
         for path in filter(None, PATHS.values()):
-            if path.is_dir():
+            if path.suffix:
                 path.mkdir(parents=True, exist_ok=True)
             elif path.is_file() and not path.exists():
                 path.write_text('')

@@ -3,6 +3,7 @@ import itertools
 import json
 import re
 import requests
+import time
 from typing import Collection
 
 from .adnd import ADnD

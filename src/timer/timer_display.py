@@ -1,6 +1,6 @@
 from PySide2 import QtWidgets
 
-from src.settings import SIGNALS
+from .timer_signals import TIMER_RESET, TIMER_STATE, TIMER_STEP
 
 
 class TimerDisplay(QtWidgets.QLCDNumber):
@@ -10,9 +10,9 @@ class TimerDisplay(QtWidgets.QLCDNumber):
         self.is_active = False
         self.seconds = 0
         self.update_state(False)
-        SIGNALS.TIMER_STATE.connect(self.update_state)
-        SIGNALS.TIMER_STEP.connect(self.update_time)
-        SIGNALS.TIMER_RESET.connect(self.update_time)
+        TIMER_STATE.connect(self.update_state)
+        TIMER_STEP.connect(self.update_time)
+        TIMER_RESET.connect(self.update_time)
 
     def update_color(self):
         if self.is_active:

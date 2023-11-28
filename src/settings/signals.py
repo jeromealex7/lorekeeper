@@ -50,10 +50,6 @@ class SignalManager(QObject):
     CITADEL_SHOW = Signal()                     #
     CITADEL_LOADED = Signal()                   #
     REFRESH = Signal()
-    TIMER_DIAL = Signal(int)                    # seconds
-    TIMER_STEP = Signal(int)                    # remaining seconds
-    TIMER_STATE = Signal(bool)                  # active/inactive
-    TIMER_RESET = Signal(int)                   # seconds
 
     def __init__(self):
         super().__init__()

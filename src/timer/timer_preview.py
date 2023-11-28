@@ -1,14 +1,14 @@
 from PySide2 import QtWidgets
 
-from src.settings import SIGNALS
+from .timer_signals import TIMER_DIAL, TIMER_STATE
 
 
 class TimerPreview(QtWidgets.QLCDNumber):
 
     def __init__(self, parent: QtWidgets.QWidget | None = None):
         super().__init__(8, parent)
-        SIGNALS.TIMER_STATE.connect(self.update_state)
-        SIGNALS.TIMER_DIAL.connect(self.update_time)
+        TIMER_STATE.connect(self.update_state)
+        TIMER_DIAL.connect(self.update_time)
 
     def update_state(self, new_state: bool):
         self.setEnabled(not new_state)

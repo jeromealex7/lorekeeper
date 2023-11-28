@@ -4,7 +4,7 @@ from .timer import Timer
 from .timer_dial import TimerDial
 from .timer_display import TimerDisplay
 from .timer_preview import TimerPreview
-from src.settings import SIGNALS
+from .timer_signals import TIMER_DIAL, TIMER_RESET, TIMER_STATE
 from src.widgets import BuildingWindow, Icon
 
 
@@ -45,24 +45,24 @@ class TimerMenu(BuildingWindow):
         self.stop_button.clicked.connect(self.stop)
         self.update_state(False)
 
-        SIGNALS.TIMER_STATE.connect(self.update_state)
+        TIMER_STATE.connect(self.update_state)
         self.timer_dial.setValue(1800)
-        SIGNALS.TIMER_DIAL.emit(self.timer_dial.seconds)
-        SIGNALS.TIMER_RESET.emit(self.timer_dial.seconds)
-        SIGNALS.TIMER_DIAL.connect(self.update_dial)
+        TIMER_DIAL.emit(self.timer_dial.seconds)
+        TIMER_RESET.emit(self.timer_dial.seconds)
+        TIMER_DIAL.connect(self.update_dial)
 
     def play_pause(self):
         self.is_reset = False
-        SIGNALS.TIMER_STATE.emit(not self.timer.is_active)
+        TIMER_STATE.emit(not self.timer.is_active)
 
     def stop(self):
         self.is_reset = True
-        SIGNALS.TIMER_RESET.emit(self.timer_dial.seconds)
+        TIMER_RESET.emit(self.timer_dial.seconds)
 
     def update_dial(self, seconds: int):
         if not self.is_reset:
             return
-        SIGNALS.TIMER_RESET.emit(seconds)
+        TIMER_RESET.emit(seconds)
 
     def update_state(self, active: bool):
         if active:

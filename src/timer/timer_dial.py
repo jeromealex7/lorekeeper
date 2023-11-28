@@ -1,6 +1,6 @@
 from PySide2 import QtWidgets
 
-from src.settings import SIGNALS
+from .timer_signals import TIMER_DIAL, TIMER_STATE
 
 
 class TimerDial(QtWidgets.QDial):
@@ -15,8 +15,8 @@ class TimerDial(QtWidgets.QDial):
         self.setNotchesVisible(True)
         self.setNotchTarget(1.5)
 
-        SIGNALS.TIMER_STATE.connect(lambda state: self.setEnabled(not state))
+        TIMER_STATE.connect(lambda state: self.setEnabled(not state))
 
     def value_changed(self, new_value: int):
         self.seconds = new_value - new_value % 60
-        SIGNALS.TIMER_DIAL.emit(self.seconds)
+        TIMER_DIAL.emit(self.seconds)

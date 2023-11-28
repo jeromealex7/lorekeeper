@@ -11,7 +11,6 @@ from .constants import MONSTER_TABLE
 from src.model import Keep
 from src.settings import PATHS
 
-SETTINGS = ('add2_01', 'fr')
 REGEX_BOOK = re.compile(r'<a class="bookcard-module--book-link--0cee9" href="/catalog/(.*?)/">')
 REGEX_IMAGE = re.compile(r'"(/images/monsters/img/bookworm.gif)"')
 REGEX_LINK = re.compile(r'<a class="book-module--list-link--2a6a4" href="(/catalog/.*?)">')
@@ -19,6 +18,7 @@ REGEX_NAMES = re.compile(r'<th class="cn">(.*?)</th>')
 REGEX_REMOVE_HTML = re.compile(r'</?(?:a|u).*?>')
 REGEX_TEXT = re.compile(r'<table.*?</table>(.*?)<br', re.DOTALL)
 REGEX_TITLE = re.compile(r'aria-current="page" .*?>(.*?)<!--')
+SETTINGS = ('add2_01', 'fr')
 URL = r'https://www.completecompendium.com'
 
 
@@ -54,19 +54,19 @@ def iter_links(text: str) -> iter:
     return (requests.get(f'{URL}{match.groups()[0]}').text for match in REGEX_LINK.finditer(text))
 
 
-def read_html(html: str) -> tuple | None:
+def read_html(html_text: str) -> tuple | None:
     entry: dict[str, tuple[str, ...]] = {}
-    names = tuple(match.groups()[0] for match in REGEX_NAMES.finditer(html))
+    names = tuple(match.groups()[0] for match in REGEX_NAMES.finditer(html_text))
     count = len(names) or 1
     for html_key, entry_key in MONSTER_TABLE:
-        entry[entry_key] = get_keyword(html_key, html)
+        entry[entry_key] = get_keyword(html_key, html_text)
     try:
-        text = REGEX_TEXT.search(html).groups()[0]
-        title = REGEX_TITLE.search(html).groups()[0]
+        text = REGEX_TEXT.search(html_text).groups()[0]
+        title = REGEX_TITLE.search(html_text).groups()[0]
     except (AttributeError, IndexError):
         return None
 
-    def get_result(data: dict, index: int) -> dict[str, str | int]:
+    def get_result(data: dict, index: int) -> dict[str, str | int] | None:
         try:
             n = f'{title} ({names[index]})'
         except IndexError:

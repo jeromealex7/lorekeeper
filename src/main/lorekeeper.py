@@ -37,9 +37,9 @@ class Lorekeeper(QtWidgets.QApplication):
     def create_paths():
         for path in filter(None, PATHS.values()):
             if path.suffix:
-                path.mkdir(parents=True, exist_ok=True)
-            elif path.is_file() and not path.exists():
                 path.write_text('')
+            else:
+                path.mkdir(parents=True, exist_ok=True)
 
     def load_citadel(self, citadel: Citadel):
         self.citadel = citadel

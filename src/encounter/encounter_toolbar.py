@@ -1,4 +1,4 @@
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtWidgets
 
 from src.model import Encounter, Keep
 from src.widgets import BuildingToolbar

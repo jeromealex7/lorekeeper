@@ -65,6 +65,13 @@ class BookTable(BuildingTable):
         if new_row:
             self.row_num += 1
 
+    def refresh_hidden(self):
+        for row in range(self.rowCount()):
+            search_string = self.item(row, 0).text().lower() + ', ' + self.item(row, 4).text().lower()
+            hide = any(keyword in search_string for keyword in self.search_black_list) or \
+                not all(keyword in search_string for keyword in self.search_white_list)
+            self.setRowHidden(row, hide or not self.display_type[self.cellWidget(row, 1).type_name.lower()])
+
     def reload_data(self):
         self.clear()
         self.setRowCount(len(self.df.index))
@@ -77,13 +84,6 @@ class BookTable(BuildingTable):
         self.horizontalHeader().setMinimumSectionSize(20)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
-
-    def refresh_hidden(self):
-        for row in range(self.rowCount()):
-            search_string = self.item(row, 0).text().lower() + ', ' + self.item(row, 4).text().lower()
-            hide = any(keyword in search_string for keyword in self.search_black_list) or \
-                not all(keyword in search_string for keyword in self.search_white_list)
-            self.setRowHidden(row, hide or not self.display_type[self.cellWidget(row, 1).type_name.lower()])
 
     def toolbar_set_type(self, value: bool, type_: str):
         self.display_type[type_] = value

@@ -15,7 +15,7 @@ REGEX_BOOK = re.compile(r'<a class="bookcard-module--book-link--0cee9" href="/ca
 REGEX_IMAGE = re.compile(r'"(/images/monsters/img/bookworm.gif)"')
 REGEX_LINK = re.compile(r'<a class="book-module--list-link--2a6a4" href="(/catalog/.*?)">')
 REGEX_NAMES = re.compile(r'<th class="cn">(.*?)</th>')
-REGEX_REMOVE_HTML = re.compile(r'</?(?:a|u).*?>')
+REGEX_REMOVE_HTML = re.compile(r'</?[au].*?>')
 REGEX_TEXT = re.compile(r'<table.*?</table>(.*?)<br', re.DOTALL)
 REGEX_TITLE = re.compile(r'aria-current="page" .*?>(.*?)<!--')
 SETTINGS = ('add2_01', 'fr')

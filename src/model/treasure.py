@@ -22,7 +22,7 @@ class Treasure(Feature):
     WORD_FORMATS = ('.doc', '.docx', '.docm')
     EXCEL_FORMATS = ('.xls', '.xlsx', '.xlsm')
 
-    REGEX_YOUTUBE = re.compile(r'^((?:https?:)?//)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))'
+    REGEX_YOUTUBE = re.compile(r'^((?:https?:)?//)?((?:www|m)\.)?(youtube(-nocookie)?\.com|youtu.be)'
                                r'(/(?:[\w\-]+\?v=|embed/|live/|v/)?)([\w\-]+)(\S+)?$')
     TABLE_NAME = 'treasure'
     TAG_TABLE_NAME = 'inscription'

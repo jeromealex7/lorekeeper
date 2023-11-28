@@ -107,7 +107,7 @@ class Text(QtWidgets.QWidget):
         self.editor.setHtml(text)
 
     def show_toolbar(self, show: bool = True):
-        self.toolbar.setHidden(not show)
+        self.toolbar.setVisible(show)
 
     def update_format(self):
 

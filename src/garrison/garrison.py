@@ -3,7 +3,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from .guard_popup import GuardPopup
 from .guard_table import GuardTable
 from .guard_toolbar import GuardToolbar
-from src.model import Guard, Keep
+from src.model import Keep
 from src.rulesets import RULESET
 from src.settings import SIGNALS
 from src.widgets import BuildingWindow, DeleteDialog, Icon

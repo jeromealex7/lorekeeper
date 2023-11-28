@@ -4,7 +4,6 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 from .ability_frame import AbilityFrame
 from .constants import SIZES, TYPES
-from .stat_block import StatBlock
 from src.garrison import StatArea
 from src.model import Guard, Trait
 from src.rulesets import RULESET

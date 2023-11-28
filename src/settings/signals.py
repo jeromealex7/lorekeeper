@@ -44,9 +44,6 @@ class SignalManager(QObject):
     MUSIC_CONTINUE = Signal(int)                # minstrel_db_index
     MUSIC_DIRECT = Signal(int)                  # treasure_db_index
     MUSIC_NOW_PLAYING = Signal(int)             # title
-    KEEP_OPEN = Signal(str)                     # uuid
-    KEEP_NEW = Signal(str)                      # ruleset
-    KEEP_SETTINGS = Signal(str, str)            # setting_name, setting_value
     CITADEL_SHOW = Signal()                     #
     CITADEL_LOADED = Signal()                   #
     REFRESH = Signal()

@@ -1,7 +1,8 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .keep_button_frame import KeepButtonFrame
-from src.settings import PATHS, SIGNALS
+from .keep_signals import KEEP_NEW
+from src.settings import PATHS
 from src.widgets import Icon
 
 
@@ -32,6 +33,6 @@ class KeepViewer(QtWidgets.QMainWindow):
         new_menu.addAction(new_pathfinder)
         new_menu.addAction(new_dnd)
         new_menu.addAction(new_adnd)
-        new_pathfinder.triggered.connect(lambda: SIGNALS.KEEP_NEW.emit('pathfinder'))
-        new_dnd.triggered.connect(lambda: SIGNALS.KEEP_NEW.emit('dnd'))
-        new_adnd.triggered.connect(lambda: SIGNALS.KEEP_NEW.emit('adnd'))
+        new_pathfinder.triggered.connect(lambda: KEEP_NEW.emit('pathfinder'))
+        new_dnd.triggered.connect(lambda: KEEP_NEW.emit('dnd'))
+        new_adnd.triggered.connect(lambda: KEEP_NEW.emit('adnd'))

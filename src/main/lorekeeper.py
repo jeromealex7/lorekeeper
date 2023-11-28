@@ -6,6 +6,7 @@ from PySide2 import QtCore, QtWidgets
 import tomli
 
 from .citadel import Citadel
+from .keep_signals import KEEP_OPEN, KEEP_NEW
 from .keep_viewer import KeepViewer
 from src.settings import APPLICATIONS, PATHS, SERVER, SESSION, SIGNALS
 from src.widgets import Error, Loading
@@ -26,8 +27,8 @@ class Lorekeeper(QtWidgets.QApplication):
         self.viewer.show()
         self.loading = None
 
-        SIGNALS.KEEP_NEW.connect(lambda ruleset: self.load_citadel(Citadel.new(ruleset)))
-        SIGNALS.KEEP_OPEN.connect(self.on_keep_open)
+        KEEP_NEW.connect(lambda ruleset: self.load_citadel(Citadel.new(ruleset)))
+        KEEP_OPEN.connect(self.on_keep_open)
         SIGNALS.FEATURE_COMMIT.connect(
             lambda table_name, db_index: self.logger.info(f'Commit {table_name}#{db_index}'))
         SIGNALS.FEATURE_DELETE.connect(
@@ -36,6 +37,8 @@ class Lorekeeper(QtWidgets.QApplication):
     @staticmethod
     def create_paths():
         for path in filter(None, PATHS.values()):
+            if path.exists():
+                continue
             if path.suffix:
                 path.write_text('')
             else:

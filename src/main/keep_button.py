@@ -4,7 +4,8 @@ from pathlib import Path
 
 from PySide2 import QtGui, QtWidgets
 
-from src.settings import PATHS, SIGNALS
+from .keep_signals import KEEP_OPEN
+from src.settings import PATHS
 from src.widgets.icon import Icon
 
 
@@ -64,4 +65,4 @@ class KeepButton(QtWidgets.QPushButton):
         self.setText(config['name'])
 
     def open_keep(self):
-        SIGNALS.KEEP_OPEN.emit(self.config_path.name)
+        KEEP_OPEN.emit(self.config_path.name)

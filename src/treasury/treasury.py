@@ -36,7 +36,7 @@ class Treasury(BuildingWindow):
         SIGNALS.IMAGE_POPUP.connect(self.on_image_popup)
 
     def on_delete_treasure(self, db_index):
-        for building_name in ('inscription', 'repertoire', 'chart', 'guard'):
+        for building_name in ('inscription', 'repertoire', 'chart'):
             building = self.keep.buildings[building_name]
             df = building.df
             df.drop(df[df['_treasure'] == db_index].index, inplace=True)
@@ -44,8 +44,11 @@ class Treasury(BuildingWindow):
             building.save(modified_only=False)
         book = self.keep.buildings['book']
         book.df.loc[book.df['_treasure'] == db_index, '_treasure'] = 0
-        self.keep.buildings['book'].save()
-        self.keep.buildings['treasure'].save()
+        guard = self.keep.buildings['guard']
+        guard.df.loc[guard.df['_treasure'] == db_index, '_treasure'] = 0
+        self.keep.buildings['guard'].save(False)
+        self.keep.buildings['book'].save(False)
+        self.keep.buildings['treasure'].save(False)
 
     def on_image_popup(self, db_index: int):
         for child in QtWidgets.QApplication.topLevelWidgets():

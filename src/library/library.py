@@ -27,7 +27,7 @@ class Library(BuildingWindow):
         layout.addWidget(self.toolbar)
         layout.addWidget(self.book_table)
         self.frame.setLayout(layout)
-        self.resize(800, 600)
+        self.resize(1024, 768)
 
         self.toolbar.STATE.connect(self.book_table.toolbar_set_type)
         self.toolbar.STRING.connect(self.book_table.toolbar_set_search)

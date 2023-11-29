@@ -96,7 +96,7 @@ class Citadel(QtWidgets.QMainWindow):
         toggle_atelier = QtWidgets.QAction(Icon('photo_portrait'), 'Show Atelier', self)
         toggle_atelier.setShortcut(QtGui.QKeySequence('Ctrl+A'))
         toggle_atelier.triggered.connect(lambda: self.atelier.set_visibility('toggle'))
-        toggle_encounter = QtWidgets.QAction(Icon('sword'), 'Show Enlistment', self)
+        toggle_encounter = QtWidgets.QAction(Icon('gauntlet'), 'Show Enlistment', self)
         toggle_encounter.setShortcut(QtGui.QKeySequence('Ctrl+E'))
         toggle_encounter.triggered.connect(lambda: self.enlistment.set_visibility('toggle'))
         toggle_garrison = QtWidgets.QAction(Icon('helmet'), 'Show Garrison', self)

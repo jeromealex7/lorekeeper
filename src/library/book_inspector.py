@@ -93,6 +93,7 @@ class BookInspector(QtWidgets.QMainWindow):
         SIGNALS.TAB_RENAME.connect(self.on_rename)
 
         self.load_pages()
+        self.resize(1024, 768)
 
     def closeEvent(self, event: QtGui.QCloseEvent):
         if self.is_modified:

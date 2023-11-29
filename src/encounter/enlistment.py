@@ -16,7 +16,7 @@ class Enlistment(BuildingWindow):
         self.frame = QtWidgets.QFrame(self)
         self.setCentralWidget(self.frame)
         self.setWindowTitle('Enlistment - Lorekeeper')
-        self.setWindowIcon(Icon('sword'))
+        self.setWindowIcon(Icon('gauntlet'))
         self.toolbar = EncounterToolbar(keep, self)
         self.table = EncounterTable(self.keep, self)
         self.resize(800, 600)

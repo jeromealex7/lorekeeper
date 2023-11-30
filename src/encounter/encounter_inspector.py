@@ -280,8 +280,8 @@ class EncounterInspector(QtWidgets.QMainWindow):
                                     if maximum_hit_points is None else maximum_hit_points)
         hit_points_item.hp_edit.set(maximum_hit_points_item.get() if hit_points is None else hit_points)
 
+        self.table.resizeRowsToContents()
         if not row:
-            self.table.resizeRowsToContents()
             self.table.resizeColumnsToContents()
 
         if token is None:

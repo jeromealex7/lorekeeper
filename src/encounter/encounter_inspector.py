@@ -621,7 +621,10 @@ class EncounterInspector(QtWidgets.QMainWindow):
         enabled = bool(selection)
         db_indices = set(self.table.cellWidget(sel.row(), 14).get() for sel in selection)
         inspect = len(db_indices) == 1 and db_indices.pop()
-        popup = inspect and self.keep.buildings['guard'].df.at[inspect, '_treasure']
+        try:
+            popup = inspect and self.keep.buildings['guard'].df.at[inspect, '_treasure']
+        except KeyError:
+            popup = False
         self.delete_action.setEnabled(enabled)
         self.copy_action.setEnabled(enabled)
         self.damage_action.setEnabled(enabled)

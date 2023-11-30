@@ -34,7 +34,7 @@ class Quartermaster(BuildingWindow):
         self.frame.setLayout(layout)
 
         menu_bar = QtWidgets.QMenuBar(self)
-        query_menu = QtWidgets.QMenu('Q&uery', self)
+        query_menu = QtWidgets.QMenu('&Query', self)
         run_action = QtWidgets.QAction(Icon('media_play'), 'Execute Query', self)
         run_action.setShortcut(QtGui.QKeySequence('F8'))
         run_action.triggered.connect(self.execute)

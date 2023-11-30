@@ -405,8 +405,7 @@ class GuardInspector(QtWidgets.QMainWindow):
             abilities = json.loads(self.guard['abilities'])
         except json.JSONDecodeError:
             abilities = []
-        for ability in abilities:
-            self.ability_frame.add_ability(ability)
+        self.ability_frame.set(abilities)
         self.set_modified(False)
 
     def reload_title(self):

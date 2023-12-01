@@ -47,6 +47,8 @@ class SignalManager(QObject):
     CITADEL_SHOW = Signal()                     #
     CITADEL_LOADED = Signal()                   #
     REFRESH = Signal()
+    PROGRESS_RANGE = Signal(int, int)           # min, max
+    PROGRESS_SET = Signal(int)                  # step
 
     def __init__(self):
         super().__init__()

@@ -5,7 +5,7 @@ import requests
 from .constants import TYPES
 from .guard import Guard
 from src.model import Inscription, Keep, Trait, Treasure
-from src.settings import PATHS
+from src.settings import PATHS, SIGNALS
 
 PROPERTIES = (('Perception', 'perception'), ('Languages', 'languages'), ('Skills', 'skills'),
               ('Str', 'strength'), ('Dex', 'dexterity'), ('Con', 'constitution'), ('Int', 'intelligence'),
@@ -121,7 +121,9 @@ def import_monsters(keep: Keep, count: int = None, download_images: bool = True)
     else:
         aon_data_list = list(filter(None, (read_aon(index) for index in range(3000))))
         data_path.write_text(json.dumps(aon_data_list))
+    SIGNALS.PROGRESS_RANGE.emit(0, len(aon_data_list) - 1)
     for index, aon_data in enumerate(aon_data_list):
+        SIGNALS.PROGRESS_SET.emit(index)
         image_url = aon_data.pop('_image')
         if download_images and image_url:
             treasure = Treasure.read_url(keep, image_url)

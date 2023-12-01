@@ -3,13 +3,12 @@ import itertools
 import json
 import re
 import requests
-import time
 from typing import Collection
 
 from .adnd import ADnD
 from .constants import MONSTER_TABLE
 from src.model import Keep
-from src.settings import PATHS
+from src.settings import PATHS, SIGNALS
 
 REGEX_BOOK = re.compile(r'<a class="bookcard-module--book-link--0cee9" href="/catalog/(.*?)/">')
 REGEX_IMAGE = re.compile(r'"(/images/monsters/img/bookworm.gif)"')
@@ -93,10 +92,12 @@ def import_monsters(keep: Keep, books: str | Collection[str] = 'add2_01/2102'):
         data = list(filter(None, (read_html(monster_html) for monster_html in itertools.chain(*(iter_book(book)
                                                                                                 for book in books)))))
         data_path.write_text(json.dumps(data))
-    for monster_result in data:
+    SIGNALS.PROGRESS_RANGE.emit(0, len(data) - 1)
+    for index, monster_result in enumerate(data):
         for monster in monster_result:
             guard = ADnD.GUARD_TYPE(keep)
             for key, val in monster.items():
                 guard[key] = html.unescape(str(val))
             guard.commit()
-        time.sleep(.4)
+        SIGNALS.PROGRESS_SET.emit(index)
+    #    time.sleep(.4)

@@ -7,6 +7,7 @@ class Information(QtWidgets.QMessageBox):
 
     def __init__(self, title: str = '', text: str = '', parent: QtWidgets.QWidget | None = None):
         super().__init__(parent)
+        self.setStyleSheet('*{font-family: Roboto Slab; font-size: 10pt};')
         self.setText(text)
         self.setIcon(self.Information)
         self.setWindowIcon(Icon('information'))

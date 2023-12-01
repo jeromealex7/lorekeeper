@@ -7,6 +7,7 @@ class DeleteDialog(QtWidgets.QMessageBox):
 
     def __init__(self, feature_name: str, parent: QtWidgets.QWidget | None = None):
         super().__init__(parent)
+        self.setStyleSheet('*{font-family: Roboto Slab; font-size: 10pt};')
         self.setText(f'Are you sure you want to permanently remove this {feature_name}?')
         self.setWindowTitle(f'Remove {feature_name}')
         self.setIcon(QtWidgets.QMessageBox.Warning)

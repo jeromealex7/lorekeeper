@@ -133,7 +133,7 @@ class Citadel(QtWidgets.QMainWindow):
         self.resize(900, 400)
 
         SHORTCUTS.create_shortcut('Ctrl+Shift+W', lambda _: self.on_close_temporary())
-        SHORTCUTS.create_shortcut('Ctrl+B', lambda _: self.atelier.set_visibility(True))
+        SHORTCUTS.create_shortcut('Ctrl+A', lambda _: self.atelier.set_visibility(True))
         SHORTCUTS.create_shortcut('Ctrl+E', lambda _: self.enlistment.set_visibility(True))
         SHORTCUTS.create_shortcut('Ctrl+G', lambda _: self.garrison.set_visibility(True))
         SHORTCUTS.create_shortcut('Ctrl+L', lambda _: self.library.set_visibility(True))

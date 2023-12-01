@@ -242,3 +242,6 @@ class Presenter(BuildingWindow):
         self.encounter_widget.setHidden(data is None or data.empty)
         self.encounter_widget.set_data(data)
         self.reload_images()
+
+    def showEvent(self, event: QtGui.QShowEvent):
+        self.resize_timer.start(400)

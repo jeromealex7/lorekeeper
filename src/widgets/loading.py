@@ -5,6 +5,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from .background_process import BackgroundProcess
 from .error import Error
 from .icon import Icon
+from src.settings import SIGNALS
 
 
 class Loading(QtWidgets.QDialog):
@@ -29,6 +30,8 @@ class Loading(QtWidgets.QDialog):
         layout.addWidget(label)
         layout.addWidget(self.progress_bar)
         self.setLayout(layout)
+        SIGNALS.PROGRESS_RANGE.connect(self.progress_bar.setRange)
+        SIGNALS.PROGRESS_SET.connect(self.progress_bar.setValue)
 
     def closeEvent(self, event: QtGui.QCloseEvent):
         event.ignore()

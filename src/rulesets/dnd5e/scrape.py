@@ -1,14 +1,13 @@
 from collections import defaultdict
 import json
 
-from PySide2 import QtWidgets
 import requests
 import re
 
 from .constants import ALIGNMENTS, SIZES, TYPES
 from src.model import Inscription, Keep, Trait, Treasure
 from src.rulesets import RULESET
-from src.settings import PATHS
+from src.settings import PATHS, SIGNALS
 
 REGEX_ABILITY = re.compile(r'<p><em><strong>(?P<ability_name>.*?)\.?<\/strong><\/em>\s*(?P<ability_text>.*?)\s*<\/p>')
 URL = r'https://gist.githubusercontent.com/tkfu/9819e4ac6d529e225e9fc58b358c3479/raw/d4df8804c25a662efc42936db60cfbc0a5b19db8/srd_5e_monsters.json'
@@ -82,6 +81,7 @@ def read_entry(entry: dict) -> tuple[str | None, dict[str, str | int]]:
 
 def import_monsters(keep: Keep, count: int | None = None, download_images: bool = True):
     entry_list = get_data()
+    SIGNALS.PROGRESS_RANGE.emit(0, len(entry_list) - 1)
     for index, entry in enumerate(entry_list):
         if count and index >= count:
             break
@@ -99,9 +99,12 @@ def import_monsters(keep: Keep, count: int | None = None, download_images: bool 
         except Exception as err:
             print(err, entry)
             continue
-        guard = RULESET.GUARD_TYPE.new(keep)
-        guard.update(data)
-        trait = Trait(keep)
-        trait['name'] = 'Monster Manual'
-        trait['_guard'] = guard.commit()
-        trait.commit()
+        else:
+            guard = RULESET.GUARD_TYPE.new(keep)
+            guard.update(data)
+            trait = Trait(keep)
+            trait['name'] = 'Monster Manual'
+            trait['_guard'] = guard.commit()
+            trait.commit()
+        finally:
+            SIGNALS.PROGRESS_SET.emit(index)

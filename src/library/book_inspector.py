@@ -42,7 +42,7 @@ class BookInspector(QtWidgets.QMainWindow):
         close_action.setShortcut(QtGui.QKeySequence('Alt+F4'))
         book_menu.addAction(close_action)
         self.page_menu = QtWidgets.QMenu(self)
-        self.page_menu.setTitle('Page')
+        self.page_menu.setTitle('&Page')
         new_page_action = QtWidgets.QAction(Icon('document_text'), 'New Page', self)
         new_page_action.setShortcut(QtGui.QKeySequence('Ctrl+N'))
         new_page_action.triggered.connect(self.new_page)

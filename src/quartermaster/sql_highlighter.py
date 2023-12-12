@@ -11,7 +11,7 @@ class SQLHighlighter(QtGui.QSyntaxHighlighter):
         keyword_format.setForeground(QtGui.QColor(0, 0, 255))
 
         self.highlight_rules.append((r'\b(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|AND|OR|GROUP BY|LEFT JOIN|RIGHT JOIN|'
-                                     r'JOIN|CREATE|ALTER|DROP|ORDER BY|WITH|AS|ON|LIKE)\b',
+                                     r'JOIN|CREATE|ALTER|DROP|ORDER BY|WITH|AS|ON|LIKE|NOT)\b',
                                      keyword_format))
 
     def highlightBlock(self, text):

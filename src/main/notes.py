@@ -4,10 +4,6 @@ from src.model import Keep
 from src.widgets import Icon, Text
 
 
-class NotePage(Text):
-    pass
-
-
 class Notes(QtWidgets.QTabWidget):
     CHANGED = QtCore.Signal()
 
@@ -18,7 +14,7 @@ class Notes(QtWidgets.QTabWidget):
         self.setMovable(True)
 
     def add_page(self):
-        page = NotePage()
+        page = Text(self, self.keep)
         self.addTab(page, 'New Page')
         page.textChanged.connect(lambda: self.CHANGED.emit())
 

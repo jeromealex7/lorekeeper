@@ -1,26 +1,106 @@
-from .icon import Icon
-
 import PySide2.QtWidgets as QtWidgets
 import PySide2.QtGui as QtGui
 import PySide2.QtCore as QtCore
 
+from src.model import Book, Encounter, Feature, Keep, Minstrel, Treasure
+from src.settings import SIGNALS
+from .icon import Icon
+from .preview import Preview
 
-class _Text(QtWidgets.QTextEdit):
+
+class _TextEdit(QtWidgets.QTextEdit):
+
+    def __init__(self, parent: QtWidgets.QWidget | None = None, keep: Keep | None = None):
+        super().__init__(parent)
+        self.keep = keep
+        self.feature_preview = None
+
+        self.setAcceptDrops(True)
+        self.setAcceptRichText(True)
+        self.setMouseTracking(True)
+
+    def dragEnterEvent(self, event: QtGui.QDragEnterEvent):
+        mime_data = event.mimeData()
+        if any(f.startswith('lorekeeper/') for f in mime_data.formats()) and self.keep:
+            event.acceptProposedAction()
+            return
+        event.setAccepted(False)
+
+    def dragMoveEvent(self, event: QtGui.QDragMoveEvent):
+        self.dragEnterEvent(event)
+
+    def dropEvent(self, event: QtGui.QDropEvent):
+        mime_data = event.mimeData()
+        feature_type = None
+        for mime_format in mime_data.formats():
+            match mime_format:
+                case 'lorekeeper/book': feature_type = Book
+                case 'lorekeeper/encounter': feature_type = Encounter
+                case 'lorekeeper/minstrel': feature_type = Minstrel
+                case 'lorekeeper/treasure': feature_type = Treasure
+            if feature_type:
+                break
+        else:
+            return
+        db_index = mime_data.data(mime_format).data()
+        feature = feature_type.read_keep(self.keep, db_index)
+        cursor = self.cursorForPosition(event.pos())
+        cursor.movePosition(cursor.StartOfWord)
+        self.setTextCursor(cursor)
+        self.insertHtml(f' <a href="{mime_format}:{feature.db_index}">{feature["name"]}</a> ')
+
+    def get_feature(self, cursor: QtGui.QCursor | None = None) -> Feature | None:
+        if not self.keep:
+            return None
+        if not cursor:
+            cursor = self.textCursor()
+        cursor.select(cursor.WordUnderCursor)
+        word = cursor.charFormat().anchorHref().strip()
+        try:
+            feature_type_name, db_index_str = word.split('lorekeeper/')[1].split(':')
+            return self.keep.buildings[feature_type_name].feature_type.read_keep(self.keep, int(db_index_str))
+        except (IndexError, KeyError):
+            return None
 
     def insertFromMimeData(self, source: QtCore.QMimeData):
         mime_data = QtCore.QMimeData()
         mime_data.setText(source.text())
-        super().insertFromMimeData(mime_data)
+
+    def leaveEvent(self, event: QtCore.QEvent.Leave):
+        if self.feature_preview:
+            self.feature_preview.deleteLater()
+
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent):
+        super().mouseMoveEvent(event)
+        feature = self.get_feature(self.cursorForPosition(event.pos()))
+        if feature is None or self.feature_preview and self.feature_preview.db_index != feature.db_index:
+            if self.feature_preview:
+                self.feature_preview.deleteLater()
+                self.feature_preview = None
+            return
+        if not self.feature_preview:
+            self.feature_preview = Preview(feature)
+            self.feature_preview.show()
+        self.feature_preview.move(event.globalPos() + QtCore.QPoint(10, 10))
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent):
+        super().mousePressEvent(event)
+        if event.modifiers() == QtGui.Qt.ControlModifier:
+            feature = self.get_feature()
+            if not feature:
+                return
+            SIGNALS.FEATURE_INSPECT.emit(feature.TABLE_NAME, feature.db_index)
 
 
 class Text(QtWidgets.QWidget):
     FONT_SIZES = (8, 9, 10, 11, 12, 14, 16, 20, 24, 28, 40)
     textChanged = QtCore.Signal()
 
-    def __init__(self, parent: QtWidgets.QWidget | None = None):
+    def __init__(self, parent: QtWidgets.QWidget | None = None, keep: Keep = None):
         super().__init__(parent=parent)
+        self.keep = keep
 
-        self.editor = _Text()
+        self.editor = _TextEdit(self, self.keep)
         self.editor.setAutoFormatting(QtWidgets.QTextEdit.AutoAll)
         self.editor.selectionChanged.connect(self.update_format)
 
@@ -80,7 +160,6 @@ class Text(QtWidgets.QWidget):
         self.toolbar.addAction(self.align_center_action)
         self.toolbar.addAction(self.align_justify_action)
         self.toolbar.setContentsMargins(0, 0, 0, 0)
-        self.editor.setAcceptRichText(True)
 
         layout = QtWidgets.QVBoxLayout()
         layout.setSpacing(0)

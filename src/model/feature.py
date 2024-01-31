@@ -73,11 +73,7 @@ class Feature(pd.Series):
         return ''
 
     def get_new_index(self) -> int:
-        indices = set(self.df.index.values)
-        current = 1
-        while current in indices:
-            current += 1
-        return current
+        return max(self.df.index.values.tolist() + [0]) + 1
 
     def get_plain_text(self) -> str:
         parser = TextParser()

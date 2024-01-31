@@ -15,7 +15,7 @@ class PageTab(QtWidgets.QFrame):
         self.page = page
         self.page['_book'] = book.db_index
 
-        self.text_edit = Text(self)
+        self.text_edit = Text(self, self.keep)
         self.text_edit.set_html(page['text'])
         self.reference_frame = ReferenceFrame(book.keep, page.db_index, self)
 

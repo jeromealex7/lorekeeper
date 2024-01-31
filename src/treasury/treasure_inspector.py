@@ -18,7 +18,7 @@ class TreasureInspector(QtWidgets.QMainWindow):
         self.treasure = treasure
 
         self.frame = QtWidgets.QFrame(self)
-        self.text_edit = Text(self)
+        self.text_edit = Text(self, self.keep)
         self.image_label = QtWidgets.QLabel()
         self.image_label.setAlignment(QtCore.Qt.AlignCenter)
         self.image_label.setFixedSize(200, 200)

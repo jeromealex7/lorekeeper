@@ -29,6 +29,11 @@ class BuildingToolbar(QtWidgets.QToolBar):
         self.keep = keep
 
         self.building_type_actions: dict[str, BuildingTypeAction] = {}
+        self.hidden_button = QtWidgets.QToolButton(self)
+        self.hidden_button.setCheckable(True)
+        self.hidden_button.setToolTip('Show Hidden')
+        self.hidden_button.setIcon(Icon('eye_blind'))
+        self.hidden_button.toggled.connect(lambda _: self.emit_search)
         self.search_edit = QtWidgets.QLineEdit(self)
         self.search_edit.setPlaceholderText('Enter search string')
         self.search_edit.textChanged.connect(self.on_search_string_changed)
@@ -44,9 +49,14 @@ class BuildingToolbar(QtWidgets.QToolBar):
             SIGNALS.FEATURE_DELETE.connect(self.on_feature_commit)
             self.on_feature_commit(self.feature_type.TABLE_NAME)
 
+        self.addSeparator()
+        self.addWidget(self.hidden_button)
+
     def emit_search(self):
         white_list = []
         black_list = []
+        if not self.hidden_button.isChecked():
+            black_list.append('_hidden')
         for tag in self.search_edit.text().split('&'):
             tag = tag.strip().lower()
             if tag.startswith('~'):

@@ -221,7 +221,7 @@ class GuardInspector(QtWidgets.QMainWindow):
         self.guard['fortitude'] = self.fort_edit.text().strip()
         self.guard['reflex'] = self.ref_edit.text().strip()
         self.guard['will'] = self.will_edit.text().strip()
-        self.gurad['saves'] = self.save_edit.text().strip()
+        self.guard['saves'] = self.save_edit.text().strip()
         self.guard['items'] = self.items_edit.text().strip()
         self.guard['speed'] = self.speed_edit.text().strip()
         self.guard['_treasure'] = treasure.commit() if (treasure := self.image_container.treasure) else 0

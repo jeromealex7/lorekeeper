@@ -296,8 +296,8 @@ class Citadel(QtWidgets.QMainWindow):
     def set_visibility(self, state: bool | Literal['toggle'] = True):
         state = self.isHidden() if state == 'toggle' else state
         if state:
-            self.show()
-            self.setFocus()
             self.activateWindow()
+            self.showNormal()
+            self.setFocus()
         else:
             self.hide()

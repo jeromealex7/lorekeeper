@@ -176,7 +176,7 @@ class ReferenceFrame(QtWidgets.QWidget):
                 return True
             if event.type() == QtCore.QEvent.MouseButtonPress:
                 modifiers = QtWidgets.QApplication.keyboardModifiers()
-                if modifiers == QtCore.Qt.ShiftModifier and (item := self.list.itemAt(event.pos())):
+                if modifiers != QtCore.Qt.ControlModifier and (item := self.list.itemAt(event.pos())):
                     data = item.data(QtCore.Qt.UserRole)
                     feature_type = self.keep.buildings[data['table_name']].feature_type
                     feature = feature_type.read_keep(self.keep, data['db_index'])

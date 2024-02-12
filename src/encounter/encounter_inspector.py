@@ -104,6 +104,8 @@ class EncounterInspector(QtWidgets.QMainWindow):
         self.damage_action = QtWidgets.QAction(Icon('axe'), 'Deal Damage', self)
         self.damage_action.setShortcut(QtGui.QKeySequence('Ctrl+Shift+D'))
         self.damage_action.triggered.connect(self.on_damage)
+        self.reorder_action = QtWidgets.QAction(Icon('sort_up_down2'), 'Move')
+        self.reorder_action.triggered.connect(self.on_reorder)
         self.roll_action = QtWidgets.QAction(Icon('dice'), 'Reroll', self)
         self.roll_action.triggered.connect(self.on_reroll)
         self.inspect_action = QtWidgets.QAction(Icon('helmet'), 'Inspect Guard', self)
@@ -122,7 +124,7 @@ class EncounterInspector(QtWidgets.QMainWindow):
         self.auto_upload_action.toggled.connect(lambda _: self.sort())
         self.auto_upload_action.setCheckable(True)
         self.toolbar.addActions([self.copy_action, self.damage_action, self.roll_action, self.inspect_action,
-                                 self.stats_action, self.popup_action, self.delete_action])
+                                 self.reorder_action, self.stats_action, self.popup_action, self.delete_action])
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.state_action, self.presenter_action, self.auto_upload_action])
         self.toolbar.addSeparator()
@@ -175,6 +177,7 @@ class EncounterInspector(QtWidgets.QMainWindow):
         self.summary.textChanged.connect(self.set_modified)
         self.tag_frame.TAGS_CHANGED.connect(lambda _: self.set_modified(True))
         self.table.itemSelectionChanged.connect(self.on_selection_change)
+        self.table.setContextMenuPolicy(QtGui.Qt.CustomContextMenu)
         SIGNALS.ENCOUNTER_DELETE.connect(self.on_encounter_delete)
         SIGNALS.ENCOUNTER_VARIABLES.connect(self.reload_gage)
         SIGNALS.ENCOUNTER_ACTIVATE.connect(self.on_encounter_activate)
@@ -241,7 +244,7 @@ class EncounterInspector(QtWidgets.QMainWindow):
         self.table.setCellWidget(row, 14, _guard_item)
 
         initiative_roll_item.ROLLED.connect(initiative_item.set)
-        initiative_item.CHANGED.connect(lambda value: _initiative_item.setText(f'{value:>020.5f}'))
+        initiative_item.CHANGED.connect(lambda value: _initiative_item.setText(f'{value:>020.10f}'))
         maximum_hit_points_roll_item.ROLLED.connect(maximum_hit_points_item.set)
         maximum_hit_points_roll_item.ROLLED.connect(hit_points_item.set)
         maximum_hit_points_item.CHANGED.connect(lambda value: hit_points_item.hp_edit.set_maximum(value))
@@ -375,6 +378,9 @@ class EncounterInspector(QtWidgets.QMainWindow):
                     if event.key() == QtCore.Qt.Key_Delete:
                         self.on_delete(*set(sel.row() for sel in selection if sel))
                         return True
+            if event.type() == QtCore.QEvent.ContextMenu:
+                self.on_header_menu(event.pos())
+                return True
         elif watched == self.table.viewport():
             if event.type() in (QtCore.QEvent.DragEnter, QtCore.QEvent.DragMove):
                 self.on_drag(event)
@@ -425,7 +431,7 @@ class EncounterInspector(QtWidgets.QMainWindow):
         self.table.clear()
         self.table.setRowCount(0)
         self.table.setColumnCount(15)
-        self.table.setColumnHidden(13, True)
+        self.table.setColumnHidden(13, False)
         self.table.setColumnHidden(14, True)
         self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectRows)
         vertical_header = self.table.verticalHeader()
@@ -569,6 +575,16 @@ class EncounterInspector(QtWidgets.QMainWindow):
                 widget.set(0)
         self.on_selection_change()
 
+    def on_header_menu(self, point: QtCore.QPoint):
+        menu = QtWidgets.QMenu(self)
+        for index in range(1, self.table.columnCount()):
+            action = QtWidgets.QAction(self.table.horizontalHeaderItem(index).text(), self)
+            action.setCheckable(True)
+            action.setChecked(not self.table.isColumnHidden(index))
+            action.toggled.connect(partial(lambda i, state: self.table.setColumnHidden(i, not state), index))
+            menu.addAction(action)
+        menu.popup(self.table.mapToGlobal(point))
+
     def on_inspect_guard(self, db_index: int = None):
         if not db_index and (selection := set(sel.row() for sel in self.table.selectedIndexes())):
             db_index = self.table.cellWidget(selection.pop(), 14).get()
@@ -609,6 +625,51 @@ class EncounterInspector(QtWidgets.QMainWindow):
             self.auto_upload_action.setChecked(False)
             self.auto_upload_action.setEnabled(False)
 
+    def on_reorder(self):
+        self.sort()
+        items = self.table.selectedIndexes()
+        if not items:
+            return
+        current_row = items[0].row()
+        menu = QtWidgets.QMenu(self)
+        before_menu = QtWidgets.QMenu('Move Before', self)
+        before_menu.setIcon(Icon('sort_up'))
+        after_menu = QtWidgets.QMenu('Move After', self)
+        after_menu.setIcon(Icon('sort_down'))
+
+        def adjust_ini(revert: bool = False):
+            for row in range(self.table.rowCount()):
+                widget = self.table.cellWidget(row, 5)
+                if revert:
+                    widget.number_edit.set_decimals(3)
+                    continue
+                widget.number_edit.set_decimals(8)
+                new_value = widget.get() + 2 * (2 * RULESET.INITIATIVE_ASCENDING - 1) * row * 0.0000001
+                widget.set(new_value)
+
+        def set_row(new_row: int, before: bool):
+            adjust_ini(False)
+            ini = self.table.cellWidget(new_row, 5).get()
+            delta = 0.0000001 * (2 * (before ^ RULESET.INITIATIVE_ASCENDING) - 1)
+            self.table.cellWidget(current_row, 5).set(ini + delta)
+            self.sort()
+            adjust_ini(True)
+
+        for row in range(self.table.rowCount()):
+            if row == current_row:
+                continue
+            display_name = self.table.cellWidget(row, 0).get() + ' ' + str(self.table.cellWidget(row, 1).get())
+            before_action = QtWidgets.QAction(display_name, self)
+            before_action.triggered.connect(partial(set_row, row, True))
+            before_menu.addAction(before_action)
+            after_action = QtWidgets.QAction(display_name, self)
+            after_action.triggered.connect(partial(set_row, row, False))
+            after_menu.addAction(after_action)
+        menu.addMenu(before_menu)
+        menu.addMenu(after_menu)
+        menu.popup(self.table.mapToGlobal(QtCore.QPoint(0, 0)))
+
+
     def on_reroll(self, *rows: int):
         if not rows:
             rows = set(sel.row() for sel in self.table.selectedIndexes())
@@ -629,6 +690,7 @@ class EncounterInspector(QtWidgets.QMainWindow):
         self.copy_action.setEnabled(enabled)
         self.damage_action.setEnabled(enabled)
         self.roll_action.setEnabled(enabled)
+        self.reorder_action.setEnabled(inspect)
         self.inspect_action.setEnabled(inspect)
         self.stats_action.setEnabled(inspect)
         self.popup_action.setEnabled(popup)

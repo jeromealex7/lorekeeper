@@ -53,14 +53,18 @@ class NumberEdit(QtWidgets.QLineEdit):
         value = round(value, decimals) if (decimals := self._validator.decimals) else int(value)
         self.setText(str(value))
 
+
     def set_decimals(self, value: int):
         self._validator.decimals = value
+        self.set(self.get())
         self._validator.validate(self.text(), 0)
 
     def set_maximum(self, value: int | float = None):
         self._validator.maximum = value
+        self.set(self.get())
         self._validator.validate(self.text(), 0)
 
     def set_minimum(self, value: int | float = None):
         self._validator.minimum = value
+        self.set(self.get())
         self._validator.validate(self.text(), 0)

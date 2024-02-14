@@ -201,6 +201,8 @@ class EncounterInspector(QtWidgets.QMainWindow):
                 maximum_hit_points: int = None, maximum_hit_points_roll: int | str = '', label: str = '',
                 power: str = '', show: bool = True, _guard: int = 0, **_):
         row = self.table.rowCount()
+        if row >= 40:
+            raise IndexError('There cannot be more than 40 combatants.')
         index = index or max([self.table.cellWidget(r, 1).get() for r in range(row)
                               if self.table.cellWidget(r, 0).get() == name] + [0]) + 1
         self.table.insertRow(row)

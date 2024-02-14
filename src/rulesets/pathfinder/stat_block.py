@@ -144,8 +144,6 @@ class StatBlock(BasicStatBlock):
                                                                            ('Weaknesses', self.guard["weaknesses"]))
                               if value)
         self._layout.addWidget(QtWidgets.QLabel(life_text, self))
-        for label in self.findChildren(QtWidgets.QLabel):
-            label.setWordWrap(True)
         defensive_abilities = [ability for ability in abilities if ability['type'] == 'defensive']
         for ability in defensive_abilities:
             self._layout.addLayout(AbilityLabel(ability, self.guard))
@@ -156,4 +154,6 @@ class StatBlock(BasicStatBlock):
         if desc := self.guard['text']:
             self._layout.addWidget(Line())
             self._layout.addWidget(QtWidgets.QLabel(desc, self))
+        for label in self.findChildren(QtWidgets.QLabel):
+            label.setWordWrap(True)
         self._layout.addStretch()

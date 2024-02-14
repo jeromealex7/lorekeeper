@@ -16,6 +16,7 @@ class EncounterTable(BuildingTable):
         self.search_white_list: tuple[str, ...] = ()
 
         self.reload_data()
+        self.refresh_hidden()
 
     def load_series(self, series: pd.Series, row: int | None = None):
         self.blockSignals(True)

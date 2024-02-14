@@ -63,6 +63,7 @@ class Guard(BasicGuard):
         guard = cls(keep)
         guard['name'] = 'New Guard'
         guard['level'] = 0
+        guard['gender'] = 2
         guard['type'] = 'Humanoid'
         guard['size'] = 'Medium'
         guard['perception'] = 5

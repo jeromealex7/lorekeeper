@@ -47,7 +47,7 @@ class GuardInspector(QtWidgets.QMainWindow):
         self.gender_edit = QtWidgets.QComboBox(self)
         for index, name in enumerate(('male', 'female', 'other')):
             self.gender_edit.addItem(Icon(f'symbol_{name}'), name, index)
-        self.perception_edit = NumberEdit()
+        self.perception_edit = NumberEdit(parent=self)
         self.senses_edit = QtWidgets.QLineEdit(self)
         self.strength_edit = QtWidgets.QLineEdit(self)
         self.dexterity_edit = QtWidgets.QLineEdit(self)
@@ -99,6 +99,8 @@ class GuardInspector(QtWidgets.QMainWindow):
 
         self.stat_block = StatArea(self.guard, self)
         self.stat_block.setFixedWidth(400)
+        block_layout = QtWidgets.QVBoxLayout()
+        block_layout.addWidget(self.stat_block)
 
         tag_image_layout = QtWidgets.QVBoxLayout()
         tag_image_layout.addWidget(self.image_container, alignment=QtCore.Qt.AlignCenter, stretch=1)
@@ -117,7 +119,7 @@ class GuardInspector(QtWidgets.QMainWindow):
         input_layout.addLayout(fields_layout, stretch=0)
         input_layout.addWidget(self.ability_frame, stretch=1)
         layout.addLayout(input_layout, stretch=1)
-        layout.addWidget(self.stat_block, stretch=0, alignment=QtCore.Qt.AlignTop)
+        layout.addLayout(block_layout, stretch=0)
 
         SIGNALS.GUARD_DELETE.connect(self.on_guard_delete)
 

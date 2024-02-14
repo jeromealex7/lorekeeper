@@ -52,7 +52,7 @@ def read_aon(index: int) -> dict[str, str | int | list]:
         data['size'] = REGEX_SIZE.search(text).groups()[0]
     except (AttributeError, ValueError):
         return {}
-    data['_traits'] = ['AoN'] + [match.groups()[0] for match in REGEX_TRAITS.finditer(text)]
+    data['_traits'] = ['_hidden', 'Archives of Nethys'] + [match.groups()[0] for match in REGEX_TRAITS.finditer(text)]
     try:
         data['info'] = re.search(fr'{name}</h1>(.*?)<br />', text).groups()[0]
     except AttributeError:
@@ -119,7 +119,7 @@ def import_monsters(keep: Keep, count: int = None, download_images: bool = True)
     if data_path.exists():
         aon_data_list = json.loads(data_path.read_text())
     else:
-        aon_data_list = list(filter(None, (read_aon(index) for index in range(3000))))
+        aon_data_list = list(filter(None, (read_aon(index) for index in range(5))))
         data_path.write_text(json.dumps(aon_data_list))
     SIGNALS.PROGRESS_RANGE.emit(0, len(aon_data_list) - 1)
     for index, aon_data in enumerate(aon_data_list):
@@ -130,10 +130,14 @@ def import_monsters(keep: Keep, count: int = None, download_images: bool = True)
             if treasure:
                 treasure['name'] = aon_data['name']
                 aon_data['_treasure'] = treasure.commit()
-                inscription = Inscription(keep)
-                inscription['name'] = 'AoN'
-                inscription['_treasure'] = treasure.db_index
-                inscription.commit()
+                inscription_aon = Inscription(keep)
+                inscription_aon['name'] = 'Archives of Nethys'
+                inscription_aon['_treasure'] = treasure.db_index
+                inscription_aon.commit()
+                inscription_hidden = Inscription(keep)
+                inscription_hidden['name'] = '_hidden'
+                inscription_hidden['_treasure'] = treasure.db_index
+                inscription_hidden.commit()
                 treasure.commit()
         guard = Guard.new(keep)
         guard.update(aon_data)
@@ -143,6 +147,5 @@ def import_monsters(keep: Keep, count: int = None, download_images: bool = True)
             trait['name'] = aon_data['_traits'].pop(0)
             trait['_guard'] = guard_index
             trait.commit()
-        guard.commit()
         if count and index >= count:
             break

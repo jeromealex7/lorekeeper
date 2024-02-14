@@ -17,6 +17,7 @@ class DefaultAbilityList(QtWidgets.QTreeWidget):
         self.df = pd.read_csv(io.StringIO(DEFAULT_ABILITIES), delimiter=';').sort_values(
             by=['type', 'name']
         )
+        self.df = self.df.fillna('')
         self.setColumnCount(1)
         self.setHeaderLabels(['Common Abilities:'])
 

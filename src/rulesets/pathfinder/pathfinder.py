@@ -15,7 +15,7 @@ class Pathfinder(Ruleset):
                        ('reflex', 'Ref'), ('will', 'Will'), ('saves', 'Saves'), ('resistances', 'Resistances'),
                        ('immunities', 'Immunities'), ('weaknesses', 'Weaknesses'), ('speed', 'Speed'),
                        ('hit_points', 'HP'), ('hit_points_comment', 'HP Comment'), ('_modified', 'Last Modified'),
-                       ('_created', 'Created'), ('_traits', 'Traits'))
+                       ('_created', 'Created'), ('traits', 'Traits'))
 
     GUARD_INSPECTOR = GuardInspector
     GUARD_TYPE = Guard

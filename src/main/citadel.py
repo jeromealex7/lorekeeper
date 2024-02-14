@@ -234,7 +234,7 @@ class Citadel(QtWidgets.QMainWindow):
                                   'Please wait while the Beastiary is being imported.')
                 process.get(lambda: scrape.import_monsters(keep))
 
-        citadel.save()
+        citadel.save(modified_only=False)
         return citadel
 
     @staticmethod
@@ -286,11 +286,11 @@ class Citadel(QtWidgets.QMainWindow):
             title += ' (modified)'
         self.setWindowTitle(title)
 
-    def save(self):
+    def save(self, modified_only: bool = True):
         self.keep.name = self.name_edit.text()
         self.keep.treasure_index = treasure.commit() if (treasure := self.image_container.treasure) else 0
         self.keep.notes = self.notes.get()
-        self.keep.save()
+        self.keep.save(modified_only=modified_only)
         self.is_modified = False
 
     def set_visibility(self, state: bool | Literal['toggle'] = True):

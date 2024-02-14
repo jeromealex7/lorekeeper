@@ -65,6 +65,7 @@ class _TextEdit(QtWidgets.QTextEdit):
     def insertFromMimeData(self, source: QtCore.QMimeData):
         mime_data = QtCore.QMimeData()
         mime_data.setText(source.text())
+        super().insertFromMimeData(mime_data)
 
     def leaveEvent(self, event: QtCore.QEvent.Leave):
         if self.feature_preview:

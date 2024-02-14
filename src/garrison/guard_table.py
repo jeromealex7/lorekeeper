@@ -26,6 +26,7 @@ class GuardTable(BuildingTable):
         self.name_index = 0
 
         self.reload_data()
+        self.refresh_hidden()
 
     def load_series(self, series: pd.Series, row: int | None = None):
         self.blockSignals(True)

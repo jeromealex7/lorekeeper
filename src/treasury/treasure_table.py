@@ -24,8 +24,10 @@ class TreasureTable(BuildingTable):
         self.display_type: dict[str, bool] = defaultdict(lambda: True)
         self.search_black_list: tuple[str, ...] = ()
         self.search_white_list: tuple[str, ...] = ()
-        self.reload_data()
         self.viewport().setAcceptDrops(True)
+
+        self.reload_data()
+        self.refresh_hidden()
 
     def contextMenuEvent(self, event: QtGui.QContextMenuEvent):
         db_index = self.get_db_index(self.rowAt(event.pos().y()))

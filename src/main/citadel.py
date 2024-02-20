@@ -48,7 +48,7 @@ class Citadel(QtWidgets.QMainWindow):
         for res in ('1920x1080 (recommended)', '1680x1050', '1600x900'):
             self.resolution.addItem(res)
         self.resolution.currentTextChanged.connect(
-            lambda r: self.canvas.setFixedSize(*list(map(int, re.split(r'x\s', r, 2)))[:2]))
+            lambda r: self.canvas.setFixedSize(*(list(map(int, re.split(r'[x\s]', r, 2)))[:2])))
         header = QtWidgets.QGridLayout()
         header.addWidget(QtWidgets.QLabel('Name:'), 0, 0)
         header.addWidget(self.name_edit, 0, 1)

@@ -10,6 +10,11 @@ Grab;offensive;1 action;<b>Requirements</b> [Name]'s last action was a successfu
 Greater Constrict;offensive;1 action;[Name] deals the listed amount of damage to any number of creatures grabbed or restrained by [him/her/it]. Each of those creatures can attempt a basic Fortitude save with the listed DC. A creature that fails this save falls unconscious, and a creature that succeeds is then temporarily immune to falling unconscious from Greater Constrict for 1 minute.
 Improved Grab;offensive;free action;[Name] can use Grab as a free action triggered by a hit with [his/her/its] initial attack. [Name] still needs to spend an action to extend the duration for creatures [he/she/it] already has grabbed.
 Improved Knockdown;offensive;free action;[Name] can use Knockdown as a free action triggered by a hit with its initial attack.
+Melee;offensive;1 action;{Weapon} {Attack Bonus}, <b>Damage</b> {Damage}.
+Ranged;offensive;1 action;{Weapon} {Attack Bonus}, <b>Damage</b> {Damage}.
+Affliction;offensive;;({Affliction Type:disease}) <b>Saving Throw</b> {Saving Throw}, <b>Stage 1</b> Text <b>Stage 2</b> Text <b>Stage 3</b> Text
+Knockdown;offensive;1 action;<b>Requirements</b> The monster's last action was a success with a Strike that lists Knockdown in its damage entry. <b>Effect</b> The monster knocks the target prone.
+Saving Throw;offensive;;{Description} <b>Critical Success</b> {Critical Success} <b>Success</b> {Success} <b>Failure</b> {Failure} <b>Critical Failure</b> {Critical Failure}. 
 """
 
 # Waiting for Remaster

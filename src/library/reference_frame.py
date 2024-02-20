@@ -84,8 +84,8 @@ class ReferenceFrame(QtWidgets.QWidget):
                         SIGNALS.MUSIC_CONTINUE.emit(db_index)
                     play_action.triggered.connect(play)
                     rename_action = RenameAction(Minstrel.read_keep(self.keep, data['db_index']), 'clef', self)
-                    menu.addAction(rename_action)
                     menu.addAction(play_action)
+                    menu.addAction(rename_action)
                 case 'treasure':
                     menu = TreasureMenu(Treasure.read_keep(self.keep, data['db_index']), self)
                     inspect_action = QtWidgets.QAction(Icon('chest_open'), 'Inspect Selected Treasure', self)

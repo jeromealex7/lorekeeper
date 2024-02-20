@@ -115,7 +115,7 @@ class TagEdit(QtWidgets.QWidget):
     class Validator(QtGui.QValidator):
         def validate(self, string: str, pos: int = 0) -> tuple[QtGui.QValidator.State, str, int]:
             if all((char.isalnum() or char in ' -_()') for char in string):
-                if len(string) < 3:
+                if len(string) < 2:
                     return QtGui.QValidator.Intermediate, string, pos
                 return QtGui.QValidator.Acceptable, string, pos
             return QtGui.QValidator.Invalid, '', pos

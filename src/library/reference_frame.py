@@ -189,15 +189,23 @@ class ReferenceFrame(QtWidgets.QWidget):
                 self.on_double_click()
                 return True
         elif watched == self.list:
-            if event.type() == QtCore.QEvent.KeyPress and event.key() == QtCore.Qt.Key_Delete \
-                    and (rows := self.list.selectedIndexes()):
-                self.remove_row(rows[0].row())
-                return True
+            if event.type() == QtCore.QEvent.KeyPress:
+                if (rows := self.list.selectedIndexes()):
+                    if event.key() == QtCore.Qt.Key_Delete:
+                        self.remove_row(rows[0].row())
+                        return True
+                    if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+                        self.inspect_row(rows[0].row())
         return super().eventFilter(watched, event)
 
     @staticmethod
     def get_data(feature: Feature):
         return {'table_name': feature.TABLE_NAME, 'db_index': feature.db_index}
+
+    def inspect_row(self, row: int):
+        widget = self.list.item(row)
+        data = widget.data(QtCore.Qt.UserRole)
+        SIGNALS.FEATURE_INSPECT.emit(data['table_name'], data['db_index'])
 
     def leaveEvent(self, event: QtCore.QEvent):
         if self.feature_preview:

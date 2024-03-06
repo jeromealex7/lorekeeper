@@ -99,11 +99,7 @@ class TreasureInspector(QtWidgets.QMainWindow):
         SIGNALS.TREASURE_DELETE.connect(self.on_treasure_delete)
 
     def closeEvent(self, event: QtGui.QCloseEvent):
-        self.close_window()
-        event.ignore()
-
-    def close_window(self, ask: bool = True):
-        if ask and self.is_modified:
+        if self.is_modified:
             message_box = QtWidgets.QMessageBox(self)
             message_box.setIcon(QtWidgets.QMessageBox.Warning)
             message_box.setWindowIcon(Icon('question_mark'))
@@ -118,11 +114,10 @@ class TreasureInspector(QtWidgets.QMainWindow):
             message_box.exec_()
             if message_box.clickedButton() == save_button:
                 self.treasure.commit()
-                self.deleteLater()
             elif message_box.clickedButton() == close_button:
-                self.deleteLater()
-            return
-        self.deleteLater()
+                pass
+            else:
+                event.ignore()
 
     def delete_inscriptions(self):
         inscription = self.treasure.keep.buildings['inscription']

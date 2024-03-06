@@ -202,8 +202,7 @@ class Citadel(QtWidgets.QMainWindow):
             event.ignore()
             return
         self.keep.save()
-        for window in QtWidgets.QApplication.topLevelWidgets():
-            window.deleteLater()
+        QtWidgets.QApplication.quit()
 
     @property
     def is_modified(self):
@@ -253,6 +252,8 @@ class Citadel(QtWidgets.QMainWindow):
         for window in QtWidgets.QApplication.topLevelWidgets():
             if window == self:
                 self.set_visibility(True)
+                continue
+            if window.parent():
                 continue
             if force and not isinstance(window, BuildingWindow):
                 window.deleteLater()

@@ -236,11 +236,7 @@ class GuardInspector(QtWidgets.QMainWindow):
         self.set_modified(False)
 
     def closeEvent(self, event: QtGui.QCloseEvent):
-        self.close_window()
-        event.ignore()
-
-    def close_window(self, ask: bool = True):
-        if ask and self.is_modified:
+        if self.is_modified:
             message_box = QtWidgets.QMessageBox(self)
             message_box.setIcon(QtWidgets.QMessageBox.Warning)
             message_box.setWindowIcon(Icon('question_mark'))
@@ -257,9 +253,9 @@ class GuardInspector(QtWidgets.QMainWindow):
                 self.on_save()
                 self.deleteLater()
             elif message_box.clickedButton() == close_button:
-                self.deleteLater()
-            return
-        self.deleteLater()
+                pass
+            else:
+                event.ignore()
 
     @property
     def db_index(self):

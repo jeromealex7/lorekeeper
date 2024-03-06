@@ -111,9 +111,8 @@ class BookInspector(QtWidgets.QMainWindow):
             message_box.exec()
             if message_box.clickedButton() == save_close_button:
                 self.save()
-                self.deleteLater()
             elif message_box.clickedButton() == close_button:
-                self.deleteLater()
+                pass
             else:
                 event.ignore()
 

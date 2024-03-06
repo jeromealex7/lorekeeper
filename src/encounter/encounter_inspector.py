@@ -152,7 +152,7 @@ class EncounterInspector(QtWidgets.QMainWindow):
         reload_action = QtWidgets.QAction(Icon('refresh'), 'Reload from Enlistment', self)
         reload_action.triggered.connect(self.load_encounter)
         close_action = QtWidgets.QAction(Icon('door_exit'), 'Exit', self)
-        close_action.triggered.connect(self.close_window)
+        close_action.triggered.connect(self.close)
         close_action.setShortcut(QtGui.QKeySequence('Alt+F4'))
         sort_icon = Icon('sort_19_ascending.png') if RULESET.INITIATIVE_ASCENDING else Icon('sort_19_descending.png')
         sort_action = QtWidgets.QAction(sort_icon, 'Sort by Initiative', self)
@@ -320,11 +320,7 @@ class EncounterInspector(QtWidgets.QMainWindow):
         self.new_entry.setText('')
 
     def closeEvent(self, event: QtGui.QCloseEvent):
-        self.close_window()
-        event.ignore()
-
-    def close_window(self, ask: bool = True):
-        if ask and self.is_modified:
+        if self.is_modified:
             message_box = QtWidgets.QMessageBox(self)
             message_box.setIcon(QtWidgets.QMessageBox.Warning)
             message_box.setWindowIcon(Icon('question_mark'))
@@ -339,11 +335,10 @@ class EncounterInspector(QtWidgets.QMainWindow):
             message_box.exec_()
             if message_box.clickedButton() == save_button:
                 self.encounter.commit()
-                self.deleteLater()
             elif message_box.clickedButton() == close_button:
-                self.deleteLater()
-            return
-        self.deleteLater()
+                pass
+            else:
+                event.ignore()
 
     def delete_banners(self):
         banner = self.keep.buildings['banner']

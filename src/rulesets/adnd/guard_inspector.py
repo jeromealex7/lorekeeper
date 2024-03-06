@@ -18,11 +18,3 @@ class GuardInspector(QtWidgets.QMainWindow):
         self.setCentralWidget(self.stat_block)
         self.setWindowIcon(Icon('skull'))
         self.setWindowTitle(guard['name'])
-
-    def closeEvent(self, event: QtGui.QCloseEvent):
-        self.close_window()
-        event.ignore()
-
-    def close_window(self):
-        self.deleteLater()
-

@@ -88,9 +88,6 @@ class ReferenceFrame(QtWidgets.QWidget):
                     menu.addAction(rename_action)
                 case 'treasure':
                     menu = TreasureMenu(Treasure.read_keep(self.keep, data['db_index']), self)
-                    inspect_action = QtWidgets.QAction(Icon('chest_open'), 'Inspect Selected Treasure', self)
-                    inspect_action.triggered.connect(lambda: SIGNALS.TREASURE_INSPECT.emit(db_index))
-                    menu.addAction(inspect_action)
                 case _: return
             remove_action = QtWidgets.QAction(Icon('garbage'), 'Remove Reference', self)
             remove_action.triggered.connect(lambda: self.remove_feature(table_name, db_index))

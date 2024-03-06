@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 import pandas as pd
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 from src.model import Book, Keep
 from src.settings import SIGNALS
@@ -21,6 +21,13 @@ class BookTable(BuildingTable):
         self.reload_data()
         self.refresh_hidden()
 
+    def eventFilter(self, source: QtCore.QObject, event: QtCore.QEvent) -> bool:
+        if event.type() == QtCore.QEvent.MouseMove and source in (QtWidgets.QToolButton,):
+            event.setLocalPos(event.pos() + source.pos())
+            self.mouseMoveEvent(event)
+            return True
+        return super().eventFilter(source, event)
+
     def load_series(self, series: pd.Series, row: int | None = None):
         self.blockSignals(True)
         new_row = row is None
@@ -39,6 +46,10 @@ class BookTable(BuildingTable):
         type_icon.setIconSize(QtCore.QSize(22, 22))
         type_icon.setAutoRaise(True)
         type_icon.clicked.connect(lambda: SIGNALS.BOOK_INSPECT.emit(db_index))
+        type_icon.installEventFilter(self)
+        type_item.installEventFilter(self)
+        type_item.setMouseTracking(True)
+        type_icon.setMouseTracking(True)
         type_layout.addWidget(type_icon, alignment=QtCore.Qt.AlignCenter)
         type_layout.setAlignment(QtCore.Qt.AlignCenter)
         type_layout.setContentsMargins(0, 0, 0, 0)

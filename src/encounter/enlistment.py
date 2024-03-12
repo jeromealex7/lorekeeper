@@ -10,7 +10,7 @@ from src.widgets import BuildingWindow, DeleteDialog, Icon
 
 class Enlistment(BuildingWindow):
 
-    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None):
+    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None, settings: dict = None):
         super().__init__(parent)
         self.keep = keep
         self.frame = QtWidgets.QFrame(self)
@@ -28,6 +28,7 @@ class Enlistment(BuildingWindow):
 
         self.toolbar.STRING.connect(self.table.toolbar_set_search)
         self.table.SEARCH.connect(self.toolbar.search)
+        self.set_settings(settings)
         SIGNALS.ENCOUNTER_COMMIT.connect(lambda _: keep.buildings['encounter'].save())
         SIGNALS.ENCOUNTER_DELETE.connect(self.on_encounter_delete)
         SIGNALS.ENCOUNTER_INSPECT.connect(self.on_encounter_inspect)
@@ -47,6 +48,9 @@ class Enlistment(BuildingWindow):
             delete_action.triggered.connect(lambda: self.on_delete(db_index))
             menu.addAction(delete_action)
         menu.popup(event.globalPos())
+
+    def get_settings(self) -> dict:
+        return {'hidden': tuple(self.table.isColumnHidden(column) for column in range(self.table.columnCount()))}
 
     def on_delete(self, db_index: int):
         if DeleteDialog('encounter').get() == 'delete':
@@ -83,3 +87,9 @@ class Enlistment(BuildingWindow):
         encounter['name'] = 'New Encounter'
         db_index = encounter.commit()
         SIGNALS.ENCOUNTER_INSPECT.emit(db_index)
+
+    def set_settings(self, settings: dict):
+        if not settings:
+            return
+        for column, hidden in enumerate(settings.get('hidden', ())):
+            self.table.setColumnHidden(column, hidden)

@@ -11,7 +11,7 @@ from src.widgets import BuildingWindow, DeleteDialog, Icon
 
 class Garrison(BuildingWindow):
 
-    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None):
+    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None, settings: dict = None):
         super().__init__(parent)
         self.keep = keep
         self.frame = QtWidgets.QFrame(self)
@@ -30,6 +30,7 @@ class Garrison(BuildingWindow):
         self.toolbar.STATE.connect(self.table.toolbar_set_type)
         self.toolbar.STRING.connect(self.table.toolbar_set_search)
         self.table.SEARCH.connect(self.toolbar.search)
+        self.set_settings(settings)
         SIGNALS.GUARD_COMMIT.connect(lambda _: keep.buildings['guard'].save(False))
         SIGNALS.GUARD_DELETE.connect(self.on_delete_guard)
         SIGNALS.GUARD_INSPECT.connect(self.on_inspect_guard)
@@ -70,6 +71,9 @@ class Garrison(BuildingWindow):
             menu.addAction(delete_action)
         menu.popup(event.globalPos())
 
+    def get_settings(self) -> dict:
+        return {'hidden': tuple(self.table.isColumnHidden(column) for column in range(self.table.columnCount()))}
+
     def on_delete(self, db_index: int):
         if DeleteDialog('guard').get() == 'delete':
             RULESET.GUARD_TYPE.read_keep(self.keep, db_index=db_index).delete()
@@ -109,3 +113,9 @@ class Garrison(BuildingWindow):
                 return
         inspector = RULESET.GUARD_INSPECTOR(RULESET.GUARD_TYPE.read_keep(self.keep, db_index=db_index))
         inspector.show()
+
+    def set_settings(self, settings: dict):
+        if not settings:
+            return
+        for column, hidden in enumerate(settings.get('hidden', ())):
+            self.table.setColumnHidden(column, hidden)

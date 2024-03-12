@@ -35,8 +35,10 @@ class Keep:
                                                 Trait, Treasure)
 
     def __init__(self, name: str, ruleset: str, uuid_: str = None, treasure_index: int = 0, player_count: int = 4,
-                 player_level: int = 1, custom_tokens: list[str] = None, notes: list[tuple[str, str]] = None, **_):
+                 player_level: int = 1, custom_tokens: list[str] = None, notes: list[tuple[str, str]] = None,
+                 building_settings: dict = None, **_):
         self.buildings: dict[str, Building] = dict()
+        self.building_settings = building_settings or {}
         self.custom_tokens: list[str] = custom_tokens or []
         self.name = name
         self.notes = notes or []
@@ -111,6 +113,7 @@ class Keep:
             treasure_index=self.treasure_index,
             player_count=self.player_count,
             player_level=self.player_level,
-            notes=self.notes
+            notes=self.notes,
+            building_settings=self.building_settings,
         )
         PATHS['keeps'].joinpath(self.uuid).with_suffix('.json').write_text(json.dumps(config))

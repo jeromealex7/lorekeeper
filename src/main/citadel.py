@@ -33,7 +33,7 @@ class Citadel(QtWidgets.QMainWindow):
         self.keep.save(modified_only=False)
         self.setWindowTitle('Citadel - Lorekeeper')
         self.setWindowIcon(Icon('fortress_tower'))
-        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags())
         self.setMinimumWidth(300)
 
         self.frame = QtWidgets.QFrame()
@@ -67,15 +67,15 @@ class Citadel(QtWidgets.QMainWindow):
         self.canvas = Presenter(keep, canvas=True, parent=self)
         self.canvas.setFixedSize(1920, 1080)
 
-        self.enlistment = Enlistment(keep)
-        self.garrison = Garrison(keep)
+        self.enlistment = Enlistment(keep, settings=self.keep.building_settings.get('Enlistment'))
+        self.garrison = Garrison(keep, settings=self.keep.building_settings.get('Garrison'))
         self.quartermaster = Quartermaster(keep)
-        self.library = Library(keep)
-        self.music_hall = MusicHall(keep)
+        self.library = Library(keep, settings=self.keep.building_settings.get('Library'))
+        self.music_hall = MusicHall(keep, settings=self.keep.building_settings.get('MusicHall'))
         self.presenter = Presenter(keep)
-        self.atelier = Atelier(keep)
+        self.atelier = Atelier(keep, settings=self.keep.building_settings.get('Atelier'))
         self.timer_menu = TimerMenu()
-        self.treasury = Treasury(keep)
+        self.treasury = Treasury(keep, settings=self.keep.building_settings.get('Treasury'))
 
         self.reload_keep()
         menu = self.menuBar()
@@ -204,6 +204,10 @@ class Citadel(QtWidgets.QMainWindow):
         self.keep.save()
         QtWidgets.QApplication.quit()
 
+    def get_building_settings(self) -> dict:
+        return {str(building): building.get_settings() for building in (self.atelier, self.enlistment, self.garrison,
+                                                                        self.library, self.music_hall, self.treasury)}
+
     @property
     def is_modified(self):
         return self._is_modified or any(building.is_modified for building in self.keep.buildings.values())
@@ -291,6 +295,7 @@ class Citadel(QtWidgets.QMainWindow):
         self.keep.name = self.name_edit.text()
         self.keep.treasure_index = treasure.commit() if (treasure := self.image_container.treasure) else 0
         self.keep.notes = self.notes.get()
+        self.keep.building_settings = self.get_building_settings()
         self.keep.save(modified_only=modified_only)
         self.is_modified = False
 

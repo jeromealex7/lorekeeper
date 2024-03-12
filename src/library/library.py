@@ -11,7 +11,7 @@ from src.widgets import BuildingWindow, DeleteDialog, Icon
 
 class Library(BuildingWindow):
 
-    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None):
+    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None, settings: dict = None):
         super().__init__(parent)
         self.keep = keep
 
@@ -32,6 +32,7 @@ class Library(BuildingWindow):
         self.toolbar.STATE.connect(self.book_table.toolbar_set_type)
         self.toolbar.STRING.connect(self.book_table.toolbar_set_search)
         self.book_table.SEARCH.connect(self.toolbar.search)
+        self.set_settings(settings)
         SIGNALS.BOOK_INSPECT.connect(self.on_inspect_book)
         SIGNALS.BOOK_COMMIT.connect(lambda _: self.save_book())
         SIGNALS.BOOK_DELETE.connect(self.on_book_delete)
@@ -58,6 +59,10 @@ class Library(BuildingWindow):
             delete_action.triggered.connect(lambda: self.on_delete(db_index))
             menu.addAction(delete_action)
         menu.popup(event.globalPos())
+
+    def get_settings(self) -> dict:
+        return {'hidden': tuple(self.book_table.isColumnHidden(column)
+                                for column in range(self.book_table.columnCount()))}
 
     def on_book_delete(self, db_index: int):
         for building_name in ('keyword', 'footnote'):
@@ -113,3 +118,9 @@ class Library(BuildingWindow):
         self.keep.buildings['footnote'].save(False)
         self.keep.buildings['performance'].save(False)
         self.keep.buildings['sigil'].save(False)
+
+    def set_settings(self, settings: dict):
+        if not settings:
+            return
+        for column, hidden in enumerate(settings.get('hidden', ())):
+            self.book_table.setColumnHidden(column, hidden)

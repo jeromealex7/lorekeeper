@@ -62,7 +62,7 @@ class TokenEdit(QtWidgets.QPushButton):
 
 class Atelier(BuildingWindow):
 
-    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None):
+    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None, settings: dict = None):
         super().__init__(parent)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint |
                             QtCore.Qt.MSWindowsFixedSizeDialogHint)
@@ -82,6 +82,7 @@ class Atelier(BuildingWindow):
         self.table.installEventFilter(self)
         self.table.viewport().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.table.viewport().installEventFilter(self)
+        self.set_settings(settings)
 
         menu_bar = QtWidgets.QMenuBar(self)
         token_menu = QtWidgets.QMenu('&Portraits', self)
@@ -146,6 +147,9 @@ class Atelier(BuildingWindow):
                 return True
         return super().eventFilter(watched, event)
 
+    def get_settings(self) -> dict:
+        return {'hidden': tuple(self.table.isColumnHidden(column) for column in range(self.table.columnCount()))}
+
     def on_additional_files(self, files: tuple[str]):
         for file_name in files:
             self.add_row(name='', token_name=file_name)
@@ -202,3 +206,9 @@ class Atelier(BuildingWindow):
     def set_modified(self, value: bool):
         self._is_modified = value
         self.reload_title()
+
+    def set_settings(self, settings: dict):
+        if not settings:
+            return
+        for column, hidden in enumerate(settings.get('hidden', ())):
+            self.table.setColumnHidden(column, hidden)

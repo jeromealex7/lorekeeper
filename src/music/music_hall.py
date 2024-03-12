@@ -12,7 +12,7 @@ from src.widgets import BuildingWindow, Icon, RenameAction
 
 class MusicHall(BuildingWindow):
 
-    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None):
+    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None, settings: dict = None):
         super().__init__(parent)
         self.frame = QtWidgets.QFrame()
         self.resize(800, 600)
@@ -35,6 +35,7 @@ class MusicHall(BuildingWindow):
         self.control_frame = ControlFrame(keep, self)
         self.minstrel_table = MinstrelTable(keep, self)
         self.toolbar = MinstrelToolbar(keep, self)
+        self.set_settings(settings)
 
         layout = QtWidgets.QHBoxLayout()
         splitter = QtWidgets.QSplitter()
@@ -87,6 +88,10 @@ class MusicHall(BuildingWindow):
             menu.addAction(rename_action)
             menu.popup(event.globalPos())
         return super().eventFilter(watched, event)
+
+    def get_settings(self) -> dict:
+        return {'hidden': tuple(self.minstrel_table.isColumnHidden(column)
+                                for column in range(self.minstrel_table.columnCount()))}
 
     def get_tab(self, db_index: int) -> tuple[int, QtWidgets.QTableWidgetItem | None]:
         for index in range(self.tab_view.count()):
@@ -161,3 +166,9 @@ class MusicHall(BuildingWindow):
         self.keep.buildings['genre'].save()
         self.keep.buildings['minstrel'].save()
         self.keep.buildings['repertoire'].save()
+
+    def set_settings(self, settings: dict):
+        if not settings:
+            return
+        for column, hidden in enumerate(settings.get('hidden', ())):
+            self.minstrel_table.setColumnHidden(column, hidden)

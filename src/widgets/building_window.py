@@ -11,15 +11,24 @@ class BuildingWindow(QtWidgets.QMainWindow):
         self.full_screen = QtWidgets.QShortcut(QtGui.QKeySequence('Alt+Return'), self)
         self.full_screen.activated.connect(self.on_full_screen)
 
+    def __str__(self) -> str:
+        return self.__class__.__name__
+
     def closeEvent(self, event: QtGui.QCloseEvent):
         self.hide()
         event.ignore()
+
+    def get_settings(self) -> dict:
+        return {}
 
     def on_full_screen(self):
         if self.isFullScreen():
             self.showNormal()
         else:
             self.showFullScreen()
+
+    def set_settings(self, settings: dict):
+        return
 
     def set_visibility(self, state: bool | Literal['toggle'] = True):
         state = self.isHidden() if state == 'toggle' else state

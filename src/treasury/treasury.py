@@ -11,7 +11,7 @@ from src.widgets import BuildingWindow, Icon
 
 class Treasury(BuildingWindow):
 
-    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None):
+    def __init__(self, keep: Keep, parent: QtWidgets.QWidget | None = None, settings: dict = None):
         super().__init__(parent)
         self.keep = keep
         self.frame = QtWidgets.QFrame(self)
@@ -30,10 +30,14 @@ class Treasury(BuildingWindow):
         self.toolbar.STATE.connect(self.table.toolbar_set_type)
         self.toolbar.STRING.connect(self.table.toolbar_set_search)
         self.table.SEARCH.connect(self.toolbar.search)
+        self.set_settings(settings)
         SIGNALS.TREASURE_COMMIT.connect(lambda _: keep.buildings['treasure'].save())
         SIGNALS.TREASURE_DELETE.connect(self.on_delete_treasure)
         SIGNALS.TREASURE_INSPECT.connect(self.on_inspect_treasure)
         SIGNALS.IMAGE_POPUP.connect(self.on_image_popup)
+
+    def get_settings(self) -> dict:
+        return {'hidden': tuple(self.table.isColumnHidden(column) for column in range(self.table.columnCount()))}
 
     def on_delete_treasure(self, db_index):
         for building_name in ('inscription', 'repertoire', 'chart'):
@@ -75,3 +79,9 @@ class Treasury(BuildingWindow):
                 return
         inspector = TreasureInspector(Treasure.read_keep(self.keep, db_index=db_index))
         inspector.show()
+
+    def set_settings(self, settings: dict):
+        if not settings:
+            return
+        for column, hidden in enumerate(settings.get('hidden', ())):
+            self.table.setColumnHidden(column, hidden)

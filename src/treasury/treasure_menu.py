@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import shutil
 import subprocess
 
@@ -35,16 +36,24 @@ class TreasureMenu(QtWidgets.QMenu):
             find_usage_action.triggered.connect(self.find_usage)
             self.addAction(find_usage_action)
 
-    def add_type_actions(self):
-        match self.treasure['type']:
-            case 'image':
-                self.add_image_actions()
-            case 'music':
-                self.add_music_actions()
-            case 'url' | 'youtube':
-                self.add_url_actions()
-            case _:
-                self.add_file_actions()
+    def add_export_actions(self):
+        export_action = QtWidgets.QAction(Icon('floppy_disk'), 'Export ...', self)
+        def _export_dialog():
+            file_name = QtWidgets.QFileDialog.getSaveFileName(
+                self, caption='Export Treasure',
+                dir=Path.cwd().with_name(f'{self.treasure["name"]}{self.treasure["suffix"]}').__str__(),
+                filter=f'{self.treasure["type"]} (*{self.treasure["suffix"]})')
+            if file_name and file_name[0]:
+                shutil.copyfile(self.treasure.path, file_name[0])
+        export_action.triggered.connect(_export_dialog)
+        self.addAction(export_action)
+
+    def add_file_actions(self):
+        start_action = QtWidgets.QAction(Icon(self.treasure.icon_name), 'Start File', self)
+        copy_start_action = QtWidgets.QAction(Icon('copy'), 'Start Copy', self)
+        start_action.triggered.connect(lambda: self.start_file(False))
+        copy_start_action.triggered.connect(lambda: self.start_file(True))
+        self.addActions([start_action, copy_start_action])
 
     def add_image_actions(self):
         show_single = QtWidgets.QAction(Icon('flatscreen_tv'), 'Show in Presenter', self)
@@ -73,6 +82,21 @@ class TreasureMenu(QtWidgets.QMenu):
         self.addActions([instant_play])
         self.addMenu(playlist_menu)
 
+    def add_type_actions(self):
+        match self.treasure['type']:
+            case 'image':
+                self.add_image_actions()
+                self.add_export_actions()
+            case 'music':
+                self.add_music_actions()
+                self.add_export_actions()
+            case 'url' | 'youtube':
+                self.add_url_actions()
+            case _:
+                self.add_file_actions()
+                self.add_export_actions()
+
+
     def add_url_actions(self):
         open_url = QtWidgets.QAction(Icon(self.treasure.icon_name), 'Open URL', self)
         open_url.triggered.connect(lambda: os.startfile(self.treasure['info']))
@@ -83,13 +107,6 @@ class TreasureMenu(QtWidgets.QMenu):
             download = QtWidgets.QAction(Icon('download'), 'Download', self)
             download.triggered.connect(lambda: Importer(self.treasure, parent=self).exec_())
             self.addAction(download)
-
-    def add_file_actions(self):
-        start_action = QtWidgets.QAction(Icon(self.treasure.icon_name), 'Start File', self)
-        copy_start_action = QtWidgets.QAction(Icon('copy'), 'Start Copy', self)
-        start_action.triggered.connect(lambda: self.start_file(False))
-        copy_start_action.triggered.connect(lambda: self.start_file(True))
-        self.addActions([start_action, copy_start_action])
 
     def find_usage(self):
         text = self.treasure.find_usage() or 'The Treasure is not used anywhere in this Keep.'
